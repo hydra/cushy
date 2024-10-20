@@ -53,6 +53,7 @@ impl<TK: Tab + Hash + Eq + Send + 'static> TabBar<TK> {
             .with(&ButtonForeground, Color::LIGHTGRAY)
             .with(&ButtonHoverForeground, Color::WHITE)
             .with(&ButtonActiveBackground, Color::GRAY)
+            .with(&WidgetBackground, Color::CLEAR_BLACK)
             .with(&SelectedColor, Color::GRAY);
 
         self.tab_items
@@ -106,22 +107,13 @@ struct TabBarWidget {
 
 impl MakeWidget for TabBarWidget {
     fn make_widget(self) -> WidgetInstance {
-
         let tab_bar = [
-            Stack::new(Orientation::Column, self.tab_items)
-                .make_widget(),
-            Expand::empty()
-                // FIXME this causes the tab bar to take the entire height of the area under the toolbar unless a height is specified
-                //       but we don't want to specify a height in pixels, we want the height to be be automatic
-                //       like it is when the background color is not specified.
-                .with(&WidgetBackground, VERY_DARK_GREY)
-                // FIXME remove this, see above.
-                .height(Px::new(38))
-                .make_widget(),
+            Stack::new(Orientation::Column, self.tab_items).make_widget(),
+            Expand::empty().make_widget(),
         ]
-            .into_columns()
-            .with(&WidgetBackground, VERY_DARK_GREY)
-            .with(&TextColor, Color::GRAY);
+        .into_columns()
+        .with(&WidgetBackground, VERY_DARK_GREY)
+        .with(&TextColor, Color::GRAY);
 
         tab_bar
             .and(self.content_area.expand())
