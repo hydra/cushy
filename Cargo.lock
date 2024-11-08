@@ -3521,6 +3521,7 @@ dependencies = [
  "serde",
  "serde_json",
  "slotmap",
+ "thiserror",
 ]
 
 [[package]]
