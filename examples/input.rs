@@ -1,6 +1,4 @@
 use cushy::figures::units::Px;
-use cushy::styles::components::HorizontalAlignment;
-use cushy::styles::HorizontalAlign;
 use cushy::value::Dynamic;
 use cushy::widget::MakeWidget;
 use cushy::widgets::input::{InputValue, MaskedString};
@@ -16,10 +14,7 @@ fn main() -> cushy::Result {
         .and(password.into_input())
         .into_rows()
         .width(Px::new(100)..Px::new(800))
-        .with_local(&HorizontalAlignment, HorizontalAlign::Center)
-        .expand_horizontally()
-        .pad()
-        .vertical_scroll()
+        .scroll()
         .centered()
         .run()
 }

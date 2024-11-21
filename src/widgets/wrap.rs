@@ -6,8 +6,8 @@ use figures::{IntoSigned, IntoUnsigned, Point, Rect, Round, ScreenScale, Size, Z
 use intentional::Cast;
 
 use crate::context::{AsEventContext, GraphicsContext, LayoutContext, Trackable};
-use crate::styles::components::{IntrinsicPadding, LayoutOrder, VerticalAlignment};
-use crate::styles::{FlexibleDimension, HorizontalOrder, VerticalAlign};
+use crate::styles::components::{IntrinsicPadding, LayoutOrder};
+use crate::styles::{FlexibleDimension, HorizontalOrder};
 use crate::value::{IntoValue, Value};
 use crate::widget::{MountedChildren, Widget, WidgetList};
 use crate::ConstraintLimit;
@@ -23,6 +23,8 @@ pub struct Wrap {
     pub children: Value<WidgetList>,
     /// The horizontal alignment for widgets on the same row.
     pub align: Value<WrapAlign>,
+    /// The vertical alignment for widgets on the same row.
+    pub vertical_align: Value<VerticalAlign>,
     /// The spacing to place between widgets. When [`FlexibleDimension::Auto`]
     /// is set, [`IntrinsicPadding`] will be used.
     pub spacing: Value<Size<FlexibleDimension>>,
@@ -36,6 +38,7 @@ impl Wrap {
         Self {
             children: children.into_value(),
             align: Value::default(),
+            vertical_align: Value::default(),
             spacing: Value::Constant(Size::squared(FlexibleDimension::Auto)),
             mounted: MountedChildren::default(),
         }
@@ -52,6 +55,13 @@ impl Wrap {
     #[must_use]
     pub fn align(mut self, align: impl IntoValue<WrapAlign>) -> Self {
         self.align = align.into_value();
+        self
+    }
+
+    /// Sets the vertical alignment and returns self.
+    #[must_use]
+    pub fn vertical_align(mut self, align: impl IntoValue<VerticalAlign>) -> Self {
+        self.vertical_align = align.into_value();
         self
     }
 
@@ -109,7 +119,7 @@ impl Widget for Wrap {
 
         self.children.invalidate_when_changed(context);
         let align = self.align.get_tracking_invalidate(context);
-        let vertical_align = context.get(&VerticalAlignment);
+        let vertical_align = self.vertical_align.get_tracking_invalidate(context);
         let spacing = self
             .spacing
             .get_tracking_invalidate(context)
@@ -180,7 +190,7 @@ impl Widget for Wrap {
                 let child_x = additional_x + child.x;
                 let child_y = y + match vertical_align {
                     VerticalAlign::Top => Px::ZERO,
-                    VerticalAlign::Center => (max_height - child.size.height) / 2,
+                    VerticalAlign::Middle => (max_height - child.size.height) / 2,
                     VerticalAlign::Bottom => max_height - child.size.height,
                 };
 
@@ -218,4 +228,17 @@ pub enum WrapAlign {
     /// spacing used between the widgets placed at the start and end of the
     /// line.
     SpaceAround,
+}
+
+/// Alignment along the vertical axis.
+#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
+pub enum VerticalAlign {
+    /// Align towards the top.
+    Top,
+    /// Align towards the middle/center.
+    Middle,
+
+    /// Align towards the bottom.
+    #[default]
+    Bottom,
 }

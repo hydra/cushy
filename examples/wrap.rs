@@ -1,9 +1,8 @@
 use cushy::figures::units::Lp;
-use cushy::styles::components::{LineHeight, TextSize, VerticalAlignment};
-use cushy::styles::VerticalAlign;
+use cushy::styles::components::{LineHeight, TextSize};
 use cushy::value::Dynamic;
 use cushy::widget::{MakeWidget, WidgetList};
-use cushy::widgets::wrap::WrapAlign;
+use cushy::widgets::wrap::{VerticalAlign, WrapAlign};
 use cushy::Run;
 use rand::{thread_rng, Rng};
 
@@ -58,8 +57,8 @@ fn main() -> cushy::Result {
                 )
                 .and(
                     vertical_align
-                        .new_radio(VerticalAlign::Center)
-                        .labelled_by("Center"),
+                        .new_radio(VerticalAlign::Middle)
+                        .labelled_by("Middle"),
                 )
                 .and(
                     vertical_align
@@ -77,7 +76,7 @@ fn main() -> cushy::Result {
             words
                 .into_wrap()
                 .align(align)
-                .with(&VerticalAlignment, vertical_align)
+                .vertical_align(vertical_align)
                 .expand_horizontally()
                 .contain()
                 .pad()
