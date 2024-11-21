@@ -215,7 +215,6 @@ impl Style {
     }
 
     /// Styles `self` as an informational hint message.
-    #[must_use]
     pub fn hint(self) -> Style {
         self.small().with_dynamic(&TextColor, HintTextColor)
     }
